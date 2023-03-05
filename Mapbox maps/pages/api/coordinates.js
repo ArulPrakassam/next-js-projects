@@ -9,13 +9,11 @@ export default function handler(req, res) {
     queueLimit: 0,
   });
   console.log("Connected to Database");
-  lat = parseInt(lat);
-  long = parseInt(long);
-  console.log(typeof lat);
+  lat = parseFloat(lat);
+  long = parseFloat(long);
   if (req.method === "GET") {
     if (lat && long && typeof lat === "number" && typeof long === "number") {
       pool.query(`insert into coordinates (lat,long) values(${lat},${long})`);
-      console.log(lat, long);
       res.status(201).json({
         coordinates: { lat, long },
         message: "value added to the record",
