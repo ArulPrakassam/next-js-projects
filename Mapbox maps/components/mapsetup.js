@@ -42,19 +42,15 @@ export default function MapSetUp({
 
   const fetchData = async () => {
     try {
-      const response = await fetch(
-        "https://urticant-receivers.000webhostapp.com/getData.php?user_name=AlertSystem"
-      );
+      const response = await fetch("./api");
       const data = await response.json();
-      setCoordinates(data.Coordinates);
+      setCoordinates(data);
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
-    setInterval(() => {
-      fetchData();
-    }, 2000);
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -66,9 +62,9 @@ export default function MapSetUp({
       markerList = [];
     }
     coordinates.forEach((item) => {
-      const [lat, lng] = item;
+      const { lat, long } = item;
       var markerItem = new mapboxgl.Marker()
-        .setLngLat([lng, lat])
+        .setLngLat([long, lat])
         .setPopup(
           new mapboxgl.Popup({ offset: 25 }) // add popups
             .setHTML(`<p>Need help !!!</p>`)

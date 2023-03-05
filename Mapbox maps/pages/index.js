@@ -1,5 +1,6 @@
 import Head from "next/head";
 import App from "components/app";
+
 export default function Home({ apiKey }) {
   return (
     <>
@@ -16,10 +17,10 @@ export default function Home({ apiKey }) {
   );
 }
 
-export const getStaticProps = () => {
+export async function getStaticProps() {
   return {
     props: {
       apiKey: process.env.MAPBOX_API_KEY,
     },
   };
-};
+}
