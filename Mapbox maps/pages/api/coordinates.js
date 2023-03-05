@@ -1,5 +1,5 @@
 export default function handler(req, res) {
-  const { lat, long } = req.query;
+  let { lat, long } = req.query;
   const mysql = require("mysql2");
   const pool = mysql.createPool(process.env.DATABASE_URL, {
     waitForConnections: true,
@@ -9,15 +9,23 @@ export default function handler(req, res) {
     queueLimit: 0,
   });
   console.log("Connected to Database");
+  lat = parseInt(lat);
+  long = parseInt(long);
+  console.log(typeof lat);
   if (req.method === "GET") {
-    pool.query(`insert into coordinates (lat,long) values(${lat},${long})`);
-
-    res
-      .status(201)
-      .json({
+    if (lat && long && typeof lat === "number" && typeof long === "number") {
+      pool.query(`insert into coordinates (lat,long) values(${lat},${long})`);
+      console.log(lat, long);
+      res.status(201).json({
         coordinates: { lat, long },
-        message: "value added successfully",
+        message: "value added to the record",
       });
-    console.log(`lat:${lat},long:${long} added to the record`);
+      console.log(`lat:${lat},long:${long} added to the record`);
+    } else {
+      res.status(200).json({
+        error: "check the url",
+        message: "value not added to the record",
+      });
+    }
   }
 }
