@@ -2,6 +2,7 @@ import MapSetUp from "/components/mapsetup";
 import React from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import AppProvider from "components/context";
 
 const Location = ({ center, apiKey }) => {
   const router = useRouter();
@@ -11,7 +12,9 @@ const Location = ({ center, apiKey }) => {
       <Head>
         <title>Accident Blackspots - {title}</title>
       </Head>
-      <MapSetUp centerCoordinates={center} apiKey={apiKey}></MapSetUp>
+      <AppProvider>
+        <MapSetUp centerCoordinates={center} apiKey={apiKey}></MapSetUp>
+      </AppProvider>
     </>
   );
 };

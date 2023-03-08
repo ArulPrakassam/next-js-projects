@@ -1,4 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
+import { FaBars } from "react-icons/fa";
+import { useGlobalContext } from "./context";
+import Sidebar from "./sidebar";
 
 var markerList = [];
 
@@ -13,6 +16,8 @@ export default function MapSetUp({
   const [zoom, setZoom] = useState(12);
   const [center, setCenter] = useState(centerCoordinates);
   const [coordinates, setCoordinates] = useState([]);
+
+  const { openSideBar } = useGlobalContext();
 
   useEffect(() => {
     if (map.current) {
@@ -79,6 +84,10 @@ export default function MapSetUp({
     <>
       <div ref={mapContainer} className="map"></div>
       <div ref={geocoderContainer} className="geocoder"></div>
+      <button className="sidebar-open-btn" onClick={openSideBar}>
+        <FaBars className="open-btn-icon" />
+      </button>
+      <Sidebar apiKey={apiKey} />
     </>
   );
 }

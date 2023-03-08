@@ -1,6 +1,7 @@
 import Head from "next/head";
 import App from "components/app";
-
+import AppProvider from "components/context";
+import React from "react";
 export default function Home({ apiKey }) {
   return (
     <>
@@ -11,7 +12,9 @@ export default function Home({ apiKey }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <App apiKey={apiKey} />
+        <AppProvider>
+          <App apiKey={apiKey} />
+        </AppProvider>
       </main>
     </>
   );
