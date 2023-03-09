@@ -21,17 +21,18 @@ export default function Sidebar({ apiKey }) {
       console.log(error);
     }
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("./api");
-        const data = await response.json();
 
-        setData(data.reverse());
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  const fetchData = async () => {
+    try {
+      const response = await fetch("./api");
+      const data = await response.json();
+
+      setData(data.reverse());
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
     fetchData();
   }, []);
 
@@ -91,7 +92,12 @@ export default function Sidebar({ apiKey }) {
               <p className="place">{place}</p>
 
               <span className="remove-item">
-                <button onClick={() => deleteItem(dttime24)}>
+                <button
+                  onClick={() => {
+                    deleteItem(dttime24);
+                    window.location.reload();
+                  }}
+                >
                   <FaRegWindowClose />
                 </button>
               </span>
