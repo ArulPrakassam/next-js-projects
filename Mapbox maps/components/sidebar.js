@@ -64,15 +64,15 @@ export default function Sidebar({ apiKey }) {
       <div className="recent">
         {data.map((item, index) => {
           const { dttm } = item;
-
+          console.log("dttm", dttm);
           let temp = new Date(dttm).getTime();
-
+          console.log("temp", temp);
           //+5:30 GMT
           let dttime24 = String(new Date(temp + 19800000)).replace(
             "GMT+0530 (India Standard Time)",
             ""
           );
-
+          console.log("dttime24", dttime24);
           //to local time
           let dttime12 = new Date(dttime24).toLocaleTimeString("en-US", {
             timeZone: "IST",
@@ -86,6 +86,47 @@ export default function Sidebar({ apiKey }) {
           });
           console.log(dttime12);
           let place = places[index];
+
+          //changing the date time according to database format
+          let dbTime = new Date(dttime24).toLocaleTimeString("en-US", {
+            timeZone: "UTC",
+            hour12: false,
+            month: "numeric",
+            year: "numeric",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+          });
+
+          console.log("dbTime", dbTime);
+          let tempdbTime = new Date(dbTime);
+
+          console.log("tempdbTime", tempdbTime);
+          let tempdbMonth =
+            (tempdbTime.getMonth() + 1).toString().length === 1
+              ? `0${(tempdbTime.getMonth() + 1).toString()}`
+              : tempdbTime.getMonth() + 1;
+          let tempdbDate =
+            tempdbTime.getDate().toString().length === 1
+              ? `0${tempdbTime.getDate().toString()}`
+              : tempdbTime.getDate();
+          let tempdbHours =
+            tempdbTime.getHours().toString().length === 1
+              ? `0${tempdbTime.getHours().toString()}`
+              : tempdbTime.getHours();
+          let tempdbMinutes =
+            tempdbTime.getMinutes().toString().length === 1
+              ? `0${tempdbTime.getMinutes().toString()}`
+              : tempdbTime.getMinutes();
+          let tempdbSeconds =
+            tempdbTime.getSeconds().toString().length === 1
+              ? `0${tempdbTime.getSeconds().toString()}`
+              : tempdbTime.getSeconds();
+
+          let dbFormat = `${tempdbTime.getFullYear()}-${tempdbMonth}-${tempdbDate} ${tempdbHours}:${tempdbMinutes}:${tempdbSeconds}`;
+          console.log("dbFormat", dbFormat);
+
           return (
             <div className="recent-item" key={temp}>
               <p className="date">{dttime12}</p>
