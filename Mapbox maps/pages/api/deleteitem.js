@@ -45,7 +45,7 @@ export default function handler(req, res) {
         : tempdbTime.getSeconds();
 
     let dbFormat = `${tempdbTime.getFullYear()}-${tempdbMonth}-${tempdbDate} ${tempdbHours}:${tempdbMinutes}:${tempdbSeconds}`;
-
+    console.log(dbFormat);
     pool.query(
       `delete from coordinates where dttm="${dbFormat}"`,
       function (err, results) {

@@ -84,7 +84,7 @@ export default function Sidebar({ apiKey }) {
             minute: "numeric",
             second: "numeric",
           });
-
+          console.log(dttime12);
           let place = places[index];
           return (
             <div className="recent-item" key={temp}>
