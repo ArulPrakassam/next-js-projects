@@ -4,6 +4,7 @@ const AppContext = React.createContext();
 
 const AppProvider = ({ children }) => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
+
   const openSideBar = () => {
     setIsSideBarOpen(true);
   };

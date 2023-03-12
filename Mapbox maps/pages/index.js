@@ -1,7 +1,7 @@
 import Head from "next/head";
 import App from "components/app";
 import AppProvider from "components/context";
-import React from "react";
+
 export default function Home({ apiKey }) {
   return (
     <>

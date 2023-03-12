@@ -1,9 +1,9 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
 import { FaBars } from "react-icons/fa";
 import { useGlobalContext } from "./context";
 import Sidebar from "./sidebar";
-
-var markerList = [];
+import { database } from "../firebase/initFirebase";
+import { ref, onValue } from "firebase/database";
 
 export default function MapSetUp({
   centerCoordinates = [79.8083, 11.9416],
@@ -18,6 +18,20 @@ export default function MapSetUp({
   const [coordinates, setCoordinates] = useState([]);
 
   const { openSideBar } = useGlobalContext();
+  useEffect(
+    useCallback(() => {
+      const query = ref(database, "coordinates/");
+      return onValue(query, (snapshot) => {
+        const data = snapshot.val();
+        if (snapshot.exists()) {
+          Object.values(data).map((current) => {
+            setCoordinates((coordinates) => [...coordinates, current]);
+          });
+        }
+      });
+    }, [coordinates, setCoordinates]),
+    []
+  );
 
   useEffect(() => {
     if (map.current) {
@@ -45,39 +59,18 @@ export default function MapSetUp({
     geocoderContainer.current.appendChild(geocoder.current.onAdd(map.current));
   }, []);
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch("./api");
-      const data = await response.json();
-      setCoordinates(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    //removing the previous markers
-    if (markerList.length != 0) {
-      for (let i of markerList) {
-        i.remove();
-      }
-      markerList = [];
-    }
     coordinates.forEach((item) => {
       const { lat, long } = item;
-      var markerItem = new mapboxgl.Marker()
-        .setLngLat([long, lat])
-        .setPopup(
-          new mapboxgl.Popup({ offset: 25 }) // add popups
-            .setHTML(`<p>Need help !!!</p>`)
-        )
-        .addTo(map.current);
-
-      //adding the markers to the array
-      markerList.push(markerItem);
+      if (lat && long) {
+        var markerItem = new mapboxgl.Marker()
+          .setLngLat([long, lat])
+          .setPopup(
+            new mapboxgl.Popup({ offset: 25 }) // add popups
+              .setHTML(`<p>Need help !!!</p>`)
+          )
+          .addTo(map.current);
+      }
     });
   }, [coordinates]);
   return (

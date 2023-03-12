@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FaRegWindowClose, FaTimes } from "react-icons/fa";
 import { useGlobalContext } from "./context";
+import { database } from "../firebase/initFirebase";
+import { ref, onValue, remove } from "firebase/database";
 
 var places = [];
+
 export default function Sidebar({ apiKey }) {
   const { isSideBarOpen, closeSideBar } = useGlobalContext();
 
@@ -22,36 +25,37 @@ export default function Sidebar({ apiKey }) {
     }
   };
 
-  const fetchData = async () => {
-    try {
-      const response = await fetch("./api");
-      const data = await response.json();
-
-      setData(data.reverse());
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   useEffect(() => {
     const fetchDetails = () => {
       data.forEach((item) => {
         const { lat, long } = item;
+
         reverseGeoCoding(long, lat);
       });
     };
     fetchDetails();
   }, [data]);
 
-  const deleteItem = async (dbTime) => {
-    const response = await fetch(`./api/deleteitem?id=${dbTime}`, {
-      method: "DELETE",
-    });
-    const data = await response.json();
+  useEffect(
+    useCallback(() => {
+      const query = ref(database, "coordinates/");
+      return onValue(query, (snapshot) => {
+        let results = snapshot.val();
+        if (snapshot.exists()) {
+          let values = Object.values(results).reverse();
+          setData(values);
+        }
+      });
+    }, [data, setData]),
+    []
+  );
+
+  //for deleting the item
+  const deleteItem = (dateTime) => {
+    const removeItem = ref(database, "coordinates/" + `${dateTime}`);
+    remove(removeItem);
   };
+
   return (
     <aside className={`${isSideBarOpen ? "sidebar show-sidebar" : "sidebar"} `}>
       <div className="sidebar-header">
@@ -63,34 +67,11 @@ export default function Sidebar({ apiKey }) {
 
       <div className="recent">
         {data.map((item, index) => {
-          const { dttm } = item;
-
-          // let temp = new Date(dttm).getTime();
-
-          // //+5:30 GMT
-          // let dttime24 = String(new Date(temp + 19800000)).replace(
-          //   "GMT+0530 (India Standard Time)",
-          //   ""
-          // );
-
-          // //to local time
-          // let dttime12 = new Date(dttime24).toLocaleTimeString("en-US", {
-          //   timeZone: "IST",
-          //   hour12: true,
-          //   month: "numeric",
-          //   year: "numeric",
-          //   day: "numeric",
-          //   hour: "numeric",
-          //   minute: "numeric",
-          //   second: "numeric",
-          // });
-
-          //use this when you host
-
-          let tempdbTime = dttm.replace("T", " ");
-          let dbTime = tempdbTime.replace(".000Z", "");
-
-          let temp = new Date(dbTime).getTime();
+          const { dateTime, lat, long } = item;
+          if (!lat || !long) {
+            return;
+          }
+          let temp = new Date(dateTime).getTime();
           let dttime24 = String(new Date(temp + 19800000)).replace(
             "GMT+0530 (India Standard Time)",
             ""
@@ -109,6 +90,7 @@ export default function Sidebar({ apiKey }) {
           });
 
           let place = places[index];
+
           return (
             <div className="recent-item" key={temp}>
               <p className="date">{dttime12}</p>
@@ -117,8 +99,7 @@ export default function Sidebar({ apiKey }) {
               <span className="remove-item">
                 <button
                   onClick={() => {
-                    // deleteItem(dttime24);
-                    deleteItem(dbTime);
+                    deleteItem(dateTime);
                     window.location.reload();
                   }}
                 >
