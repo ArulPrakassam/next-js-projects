@@ -3,9 +3,10 @@ import { getDatabase } from "firebase/database";
 import { getAuth, signInAnonymously } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
+  apiKey: "AIzaSyB1puRZojxVJhNqipc4-p-VdCNb-p4hhVE",
   authDomain: process.env.AUTH_DOMAIN,
-  databaseURL: process.env.FIREBASE_DATABASE_URL,
+  databaseURL:
+    "https://accident-blackspots-project-default-rtdb.firebaseio.com",
   projectId: process.env.PROJECT_ID,
   storageBucket: process.env.STORAGE_BUCKET,
   messagingSenderId: process.env.MESSAGING_SENDER_ID,
@@ -20,7 +21,7 @@ const auth = getAuth(app);
 
 signInAnonymously(auth)
   .then(() => {
-    console.log("successfully signed in as anonymously");
+    console.log("successfully signed in as anonymous user");
   })
   .catch((error) => {
     const errorCode = error.code;
