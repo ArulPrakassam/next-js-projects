@@ -1,3 +1,3 @@
 # These are my next js projects
 
-🤍 [Mapbox Map](https://accident-blackspots.vercel.app/)
+🤍 [Mapbox Map](https://accident-blackspots.netlify.app/)
